@@ -1,8 +1,8 @@
-# TODO
+guak# TODO
 - [x] Install Rundeck on Ubuntu
 - [x] Test Rundeck with one Node and one simple action
 - [x] Activate SSL
-- [ ] Use MySQL
+- [x] Use MySQL
 
 # Data
 * URL: https://rundeck.demoshop.rocks:4443
@@ -10,7 +10,11 @@
 * ssh
   * server: ssh localhost -p 2222
   * client: ssh localhost -p 2223
+  * server with MySQL: ssh localhost -p 2224
 * TerminalUser: roman:qwer
+* MySQL
+  * root:1234
+  * rundeck:1234
 
 # Install Rundeck on Ubuntu
 * Install Ubuntu-server in VM
@@ -103,40 +107,8 @@ tail -f /var/log/rundeck/service.log
 
 # Sicherheitspunkt 2
 
-# Create new project
-* Should be trivial
-
-# Add new Node
-* Create new file "resource.xml" with following content (where roman is the user to run commands on the node)
-```
-<?xml version="1.0" encoding="UTF-8"?>
-<project>
-<node name="client"
-  osFamily="unix"
-  username="roman"
-  hostname="10.0.2.15"
-  />
-</project>
-```
-* In Project Settings click on "Edit Nodes..."->"Add a new Node Source"->"File"
-* Enter the path to the previous created file "resource.xml"
-
-# SSH keys
-* In Project Settings click on "Edit Configuration..."->"Default Node Executor"
-* Check the "SSH Key File path" (/var/lib/rundeck/.ssh/id_rsa)
-* Create a ssh key pair (ssh-keygen) in the "SSH Key File path" as user "rundeck"
-```
-sudo -u rundeck ssh-keygen -f /var/lib/rundeck/.ssh/id_rsa
-```
-* Create new file on node (if not exist) /home/roman/.ssh/authorized_keys (where roman is the user to run commands on the node)
-* Enter the corresponding public key to the previous used private key (/var/lib/rundeck/.ssh/id_rsa) into the authorized_keys
-
-# Add new Job
-* should be trivial
-
-# Sicherungspunkt 3
-
-# Install MySQL
+# Use MySQL
+## Install MySQL
 ```
 sudo apt install mysql-server
 ```
@@ -174,3 +146,45 @@ SHOW GRANTS;
 ```
 select * from information_schema.user_privileges;
 ```
+
+## Setup Rundeck to use MySQL
+* Edit /etc/rundeck/rundeck-config.properties
+```
+dataSource.url = jdbc:mysql://rundeck.demoshop.rocks/rundeck?autoReconnect=true&useSSL=false
+dataSource.username=rundeck
+dataSource.password=1234
+dataSource.driverClassName=com.mysql.jdbc.Driver
+```
+
+# Sicherheitspunkt 3
+
+# Create new project
+* Should be trivial
+
+# Add new Node
+* Create new file "resource.xml" with following content (where roman is the user to run commands on the node)
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+<node name="client"
+  osFamily="unix"
+  username="roman"
+  hostname="10.0.2.15"
+  />
+</project>
+```
+* In Project Settings click on "Edit Nodes..."->"Add a new Node Source"->"File"
+* Enter the path to the previous created file "resource.xml"
+
+# SSH keys
+* In Project Settings click on "Edit Configuration..."->"Default Node Executor"
+* Check the "SSH Key File path" (/var/lib/rundeck/.ssh/id_rsa)
+* Create a ssh key pair (ssh-keygen) in the "SSH Key File path" as user "rundeck"
+```
+sudo -u rundeck ssh-keygen -f /var/lib/rundeck/.ssh/id_rsa
+```
+* Create new file on node (if not exist) /home/roman/.ssh/authorized_keys (where roman is the user to run commands on the node)
+* Enter the corresponding public key to the previous used private key (/var/lib/rundeck/.ssh/id_rsa) into the authorized_keys
+
+# Add new Job
+* should be trivial
