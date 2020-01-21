@@ -5,7 +5,8 @@ guak# TODO
 - [x] Use MySQL
 
 # Data
-* URL: https://rundeck.demoshop.rocks:4443
+* URL (MySQL): https://rundeck.demoshop.rocks:4443
+* URL (H2): https://rundeck.demoshop.rocks:5443
 * login: admin:admin
 * ssh
   * server: ssh localhost -p 2222
@@ -85,6 +86,7 @@ grails.serverURL=https://rundeck.demoshop.rocks:4443
 ```
 export RUNDECK_WITH_SSL=true
 export RDECK_HTTPS_PORT=4443
+export RD_URL=https://rundeck.demoshop.rocks:4443
 ```
 * Run command
 ```
@@ -162,7 +164,7 @@ dataSource.driverClassName=com.mysql.jdbc.Driver
 * Should be trivial
 
 # Add new Node
-* Create new file "resource.xml" with following content (where roman is the user to run commands on the node)
+* Create new file "resources.xml" with following content (where roman is the user to run commands on the node)
 ```
 <?xml version="1.0" encoding="UTF-8"?>
 <project>
@@ -174,7 +176,7 @@ dataSource.driverClassName=com.mysql.jdbc.Driver
 </project>
 ```
 * In Project Settings click on "Edit Nodes..."->"Add a new Node Source"->"File"
-* Enter the path to the previous created file "resource.xml"
+* Enter the path to the previous created file "resources.xml"
 
 # SSH keys
 * In Project Settings click on "Edit Configuration..."->"Default Node Executor"
@@ -188,3 +190,46 @@ sudo -u rundeck ssh-keygen -f /var/lib/rundeck/.ssh/id_rsa
 
 # Add new Job
 * should be trivial
+
+# Migrate from server A to server B
+## Setup rundeck CLI
+* Install rundeck-cli
+```
+sudo apt install rundeck-cli
+```
+
+* Add user to group rundeck
+```
+sudo gpasswd -a roman rundeck
+# log out and back in to take effect
+```
+
+* Give the /etc/rundeck dir to rundeck group
+```
+sudo chown -R root:rundeck /etc/rundeck
+```
+
+* Create Rundeck-Client configuration file .rd/rd.conf
+```
+export RD_URL=https://rundeck.demoshop.rocks:4443
+export RD_USER=admin   
+export RD_PASSWORD=admin   
+export RD_OPTS="-Djavax.net.ssl.trustStore=/etc/rundeck/ssl/truststore"
+```
+## Migrate projects
+* Export project
+```
+rd projects archives export -f local_test.jar -p local_test
+```
+
+* Import project
+```
+rd projects create -p local_test
+rd projects archives import -f local_test.jar -p local_test
+```
+## Migrate users
+* Copy
+  * /etc/rundeck/*.aclpolicy
+  * /etc/rundeck/realm.properties
+## Migrate certificates
+## Migrate nodes
