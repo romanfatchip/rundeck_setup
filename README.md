@@ -179,14 +179,23 @@ dataSource.driverClassName=com.mysql.jdbc.Driver
 * Enter the path to the previous created file "resources.xml"
 
 # SSH keys
+* Create a temporary key pair on localhost (ssh-keygen)
+```
+ssh-keygen -t rsa -b 2048 -m PEM -f rundeck_key
+```
+* Click in page header on cog->"Key Storage"->"Add or Upload a Key"
+  * Key Type: Private Key
+  * Upload File: Select the previous created private key
+* Name it (private_key) and click "save"
+* Click in page header on cog->"Key Storage"->"Add or Upload a Key"
+  * Key Type: Public Key
+  * Upload File: Select the previous created public key
+* Name it and click "save"
+* Don't forget to delete the keys
 * In Project Settings click on "Edit Configuration..."->"Default Node Executor"
-* Check the "SSH Key File path" (/var/lib/rundeck/.ssh/id_rsa)
-* Create a ssh key pair (ssh-keygen) in the "SSH Key File path" as user "rundeck"
-```
-sudo -u rundeck ssh-keygen -f /var/lib/rundeck/.ssh/id_rsa
-```
-* Create new file on node (if not exist) /home/roman/.ssh/authorized_keys (where roman is the user to run commands on the node)
-* Enter the corresponding public key to the previous used private key (/var/lib/rundeck/.ssh/id_rsa) into the authorized_keys
+* Delete the "SSH Key File path"
+* Add the path to the previous created private key (private_key) to "SSH Key Storage Path"
+* Add the public key to authorized_keys of user in previous specified node (roman)
 
 # Add new Job
 * should be trivial
