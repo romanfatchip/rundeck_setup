@@ -232,6 +232,7 @@ rd projects archives import -f local_test.jar -p local_test
   * /etc/rundeck/*.aclpolicy
   * /etc/rundeck/realm.properties
 ## Migrate certificates
+* Copy /etc/rundeck/ssl
 ## Migrate nodes
 ## Migrate jobs
 ## Migrate commands
