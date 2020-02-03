@@ -223,16 +223,11 @@ sudo gpasswd -a roman rundeck
 # log out and back in to take effect
 ```
 
-* Give the /etc/rundeck dir to rundeck group
-```
-sudo chown -R root:rundeck /etc/rundeck
-```
-
 * Create Rundeck-Client configuration file .rd/rd.conf
 ```
 export RD_URL=https://rundeck.demoshop.rocks:4443
-export RD_USER=admin   
-export RD_PASSWORD=admin   
+export RD_USER=admin
+export RD_PASSWORD=admin
 export RD_OPTS="-Djavax.net.ssl.trustStore=/etc/rundeck/ssl/truststore"
 ```
 ## Migrate projects
@@ -251,3 +246,33 @@ rd projects archives import -f local_test.jar -p local_test
   * /etc/rundeck/*.aclpolicy
   * /etc/rundeck/realm.properties
 ## Migrate nodes
+
+# AWS
+## Setup base image
+* Rundeck
+  * Hostname: https://rundeck.demoshop.rocks:4443
+  * user: admin:admin
+* MySQL:
+  * root:1234
+  * rundeck:1234
+## Setup jvtest (VM die später rundeck.janvanderstorm.de werden soll)
+* Rundeck
+  * Hostname: https://jvtest.demoshop.rocks:4443
+  * user: admin:adminin
+* MySQL:
+  * root:2345
+  * rundeck:2345
+
+# TODO after clone in AWS
+## Change hostname/port
+* /etc/hosts
+* /etc/rundeck/framework.properties
+* /etc/rundeck/rundeck-config.properties
+* /etc/default/rundeckd
+## Change username and password
+* rundeck
+  * /etc/rundeck/realm.properties (clear text or md5)
+* MySQL
+  * ... MYSQL command to change root and rundeck
+## Create new certificate for new hostname
+* follow 'Activate SSL'
