@@ -1,4 +1,4 @@
-guak# TODO
+# TODO
 - [x] Install Rundeck on Ubuntu
 - [x] Test Rundeck with one Node and one simple action
 - [x] Activate SSL
@@ -125,16 +125,20 @@ mysql -u root
 # create root-password
 ALTER USER 'root'@'localhost'
 IDENTIFIED WITH mysql_native_password BY '1234';
+# create database
+CREATE database rundeck;
+```
+* Setup MySQL for connections from outside
+  * Edit file /etc/mysql/mysql.conf.d/mysqld.cnf
+```
+bind-address            = 0.0.0.0
+```
+* Create new user
+```
+# grant all permissions to new user
+GRANT ALL on rundeck.* to 'rundeck'@'%' identified by '1234';
 FLUSH privileges;
 QUIT;
-```
-* Create database
-```
-create database rundeck;
-```
-* Grant all permissions to new user
-```
-grant ALL on rundeck.* to 'rundeck'@'localhost' identified by '1234';
 ```
 * Check databases
 ```
@@ -201,6 +205,12 @@ ssh-keygen -t rsa -b 2048 -m PEM -f rundeck_key
 * should be trivial
 
 # Migrate from server A to server B
+## Migrate certificates
+* Copy /etc/rundeck/ssl
+## Migrate port and hostname settings
+* Copy /etc/rundeck/framework.properties
+* Copy /etc/rundeck/rundeck-config.properties
+* Copy /etc/default/rundeckd
 ## Setup rundeck CLI
 * Install rundeck-cli
 ```
@@ -240,8 +250,4 @@ rd projects archives import -f local_test.jar -p local_test
 * Copy
   * /etc/rundeck/*.aclpolicy
   * /etc/rundeck/realm.properties
-## Migrate certificates
-* Copy /etc/rundeck/ssl
 ## Migrate nodes
-## Migrate jobs
-## Migrate commands
