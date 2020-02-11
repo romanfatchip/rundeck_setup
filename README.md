@@ -306,3 +306,6 @@ IDENTIFIED WITH mysql_native_password BY '<newPW>';
 * follow 'Activate SSL'
 ## Migrate data
 * follow 'Migrate from server A to server B'-->'Migrate projects'
+
+alter JanVanderstorm Server: 3.121.95.246
+neuer JanVanderstorm Server: 18.184.168.168
