@@ -246,6 +246,10 @@ rd projects archives import -f local_test.jar -p local_test
   * /etc/rundeck/*.aclpolicy
   * /etc/rundeck/realm.properties
 ## Migrate nodes
+* Copy as user rundeck
+  * /var/rundeck/projects/<project-name>/etc/resources.xml
+    * The whole path below /var/rundeck must be owned by user rundeck.rundeck (sudo chown -R rundeck.rundeck /var/rundeck/)
+  * /var/lib/rundeck/.ssh/id_rsa
 
 # AWS
 ## Setup base image
