@@ -242,7 +242,7 @@ rd projects create -p local_test
 rd projects archives import -f local_test.jar -p local_test
 ```
 ## Migrate users
-* Copy
+* Copy as user rundeck
   * /etc/rundeck/*.aclpolicy
   * /etc/rundeck/realm.properties
 ## Migrate nodes
@@ -250,6 +250,14 @@ rd projects archives import -f local_test.jar -p local_test
   * /var/rundeck/projects/<project-name>/etc/resources.xml
     * The whole path below /var/rundeck must be owned by user rundeck.rundeck (sudo chown -R rundeck.rundeck /var/rundeck/)
   * /var/lib/rundeck/.ssh/id_rsa
+```
+sudo tar -czvf rundeck_bkp.tar.gz /etc/rundeck/*.aclpolicy /etc/rundeck/realm.properties /var/rundeck/projects/<project-name>/etc/resources.xml /var/lib/rundeck/.ssh/id_rsa <project-name>.jar
+tar -xzvf rundeck_bkp.tar.gz -C rundeck_bkp
+sudo mkdir -p /var/rundeck/projects/<project-name>/etc/
+sudo chown -R rundeck.rundeck /var/rundeck
+```
+* Import resources.xml via GUI "PROJECT SETTINGS"-->"Edit Nodes..."-->"Sources"-->"Add a new Node Source"-->"File"
+  * Enter file path to "resources.xml"
 
 # AWS
 ## Setup base image
@@ -264,19 +272,37 @@ rd projects archives import -f local_test.jar -p local_test
   * Hostname: https://jvtest.demoshop.rocks:4443
   * user: admin:adminin
 * MySQL:
-  * root:2345
-  * rundeck:2345
+  * root:root
+  * rundeck:rundeck
 
 # TODO after clone in AWS
+## Change username and password
+* rundeck
+  * /etc/rundeck/realm.properties (clear text or md5)
+* rundeck-cli
+  * ~/.rd/rd.conf
+  * source ~/.rd/rd.conf
+* MySQL
+  * ... MYSQL command to change root and rundeck
+```
+#open mysql
+mysql -u root -p1234
+
+# change root-password
+ALTER USER 'root'@'localhost'
+IDENTIFIED WITH mysql_native_password BY '<newPW>';
+
+# change rundeck-password
+ALTER USER 'rundeck'@'%'
+IDENTIFIED WITH mysql_native_password BY '<newPW>';
+```
 ## Change hostname/port
 * /etc/hosts
 * /etc/rundeck/framework.properties
 * /etc/rundeck/rundeck-config.properties
 * /etc/default/rundeckd
-## Change username and password
-* rundeck
-  * /etc/rundeck/realm.properties (clear text or md5)
-* MySQL
-  * ... MYSQL command to change root and rundeck
+* source /etc/default/rundeckd
 ## Create new certificate for new hostname
 * follow 'Activate SSL'
+## Migrate data
+* follow 'Migrate from server A to server B'-->'Migrate projects'
