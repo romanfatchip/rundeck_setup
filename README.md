@@ -233,7 +233,7 @@ export RD_OPTS="-Djavax.net.ssl.trustStore=/etc/rundeck/ssl/truststore"
 ## Migrate projects
 * Export project
 ```
-rd projects archives export -f ~/<project-name>.jar -p <project-name>
+rd projects archives export -i jobs -i configs -i readmes -i acls -i scm -f ~/<project-name>.jar -p <project-name>
 ```
 
 * Import project
