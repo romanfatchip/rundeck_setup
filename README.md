@@ -225,7 +225,7 @@ sudo gpasswd -a roman rundeck
 
 * Create Rundeck-Client configuration file .rd/rd.conf
 ```
-export RD_URL=https://rundeck.demoshop.rocks:4443
+export RD_URL=https://rundeck.demoshop.rocks:4443/api/20
 export RD_USER=admin
 export RD_PASSWORD=admin
 export RD_OPTS="-Djavax.net.ssl.trustStore=/etc/rundeck/ssl/truststore"
