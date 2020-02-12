@@ -57,7 +57,7 @@ sudo apt install certbot
 nslookup -type=txt _acme-challenge.rundeck.demoshop.rocks
 
 # DNS check for letsencrypt
-sudo certbot certonly --manual --preferred-challenges dns --email roman.wedemeier@fatchip.de --no-eff-email --manual-public-ip-logging-ok --agree-tos -d rundeck.demoshop.rocks
+sudo certbot certonly --manual --preferred-challenges dns --email kontakt@fatchip.de --no-eff-email --manual-public-ip-logging-ok --agree-tos -d rundeck.demoshop.rocks
 
 # Create cert.pkcs12 with password adminin
 sudo openssl pkcs12 -export -in /etc/letsencrypt/live/rundeck.demoshop.rocks/cert.pem -inkey /etc/letsencrypt/live/rundeck.demoshop.rocks/privkey.pem -CAfile /etc/letsencrypt/live/rundeck.demoshop.rocks/chain.pem -out ~/cert.pkcs12 -name rundeck.demoshop.rocks -caname root
