@@ -69,20 +69,20 @@ sudo keytool -importkeystore -destkeystore /etc/rundeck/ssl/keystore -srckeystor
 sudo cp /etc/rundeck/ssl/keystore /etc/rundeck/ssl/truststore
 
 ```
-* Edit /etc/rundeck/ssl/ssl.properties
+* sudo nano /etc/rundeck/ssl/ssl.properties
 * Check Passwords
-* Edit /etc/rundeck/framework.properties
+* sudo nano /etc/rundeck/framework.properties
 ```
 framework.server.name = rundeck.demoshop.rocks
 framework.server.hostname = rundeck.demoshop.rocks
 framework.server.port = 4443
 framework.server.url = https://rundeck.demoshop.rocks:4443
 ```
-* Edit /etc/rundeck/rundeck-config.properties
+* sudo nano /etc/rundeck/rundeck-config.properties
 ```
 grails.serverURL=https://rundeck.demoshop.rocks:4443
 ```
-* Edit /etc/default/rundeckd
+* sudo nano /etc/default/rundeckd
 ```
 export RUNDECK_WITH_SSL=true
 export RDECK_HTTPS_PORT=4443
@@ -92,7 +92,7 @@ export RD_URL=https://rundeck.demoshop.rocks:4443
 ```
 source /etc/default/rundeckd
 ```
-* Edit /etc/hosts
+* sudo nano /etc/hosts
 ```
 127.0.0.1   rundeck.demoshop.rocks
 ```
@@ -129,7 +129,7 @@ IDENTIFIED WITH mysql_native_password BY '1234';
 CREATE database rundeck;
 ```
 * Setup MySQL for connections from outside
-  * Edit file /etc/mysql/mysql.conf.d/mysqld.cnf
+  * sudo nano /etc/mysql/mysql.conf.d/mysqld.cnf
 ```
 bind-address            = 0.0.0.0
 ```
@@ -154,7 +154,7 @@ select * from information_schema.user_privileges;
 ```
 
 ## Setup Rundeck to use MySQL
-* Edit /etc/rundeck/rundeck-config.properties
+* sudo nano /etc/rundeck/rundeck-config.properties
 ```
 dataSource.url = jdbc:mysql://rundeck.demoshop.rocks/rundeck?autoReconnect=true&useSSL=false
 dataSource.username=rundeck
@@ -233,31 +233,39 @@ export RD_OPTS="-Djavax.net.ssl.trustStore=/etc/rundeck/ssl/truststore"
 ## Migrate projects
 * Export project
 ```
-rd projects archives export -f local_test.jar -p local_test
+rd projects archives export -f ~/<project-name>.jar -p <project-name>
 ```
 
 * Import project
 ```
-rd projects create -p local_test
-rd projects archives import -f local_test.jar -p local_test
+rd projects create -p <project-name>
+rd projects archives import -f <project-name>.jar -p <project-name>
 ```
-## Migrate users
-* Copy as user rundeck
-  * /etc/rundeck/*.aclpolicy
-  * /etc/rundeck/realm.properties
-## Migrate nodes
-* Copy as user rundeck
-  * /var/rundeck/projects/<project-name>/etc/resources.xml
-    * The whole path below /var/rundeck must be owned by user rundeck.rundeck (sudo chown -R rundeck.rundeck /var/rundeck/)
-  * /var/lib/rundeck/.ssh/id_rsa
+## Backup files (groups, users, nodes, private keys, projects)
 ```
-sudo tar -czvf rundeck_bkp.tar.gz /etc/rundeck/*.aclpolicy /etc/rundeck/realm.properties /var/rundeck/projects/<project-name>/etc/resources.xml /var/lib/rundeck/.ssh/id_rsa <project-name>.jar
+sudo tar -czvf rundeck_bkp.tar.gz /etc/rundeck/*.aclpolicy /etc/rundeck/realm.properties /var/rundeck /var/lib/rundeck/.ssh/id_rsa ~/<project-name>.jar /var/www/html/fcMonitorTests/testCases/fcTestCaseDiskSpace.php
 tar -xzvf rundeck_bkp.tar.gz -C rundeck_bkp
 sudo mkdir -p /var/rundeck/projects/<project-name>/etc/
 sudo chown -R rundeck.rundeck /var/rundeck
 ```
+* Copy rundeck_bkp.tar.gz to server B
+* Copy as user rundeck all files from rundeck_bkp.tar.gz to its directories stored in the backup file
+    * The whole path to /var/rundeck/projects/<project-name>/etc/resources.xml must be owned by user rundeck.rundeck (sudo chown -R rundeck.rundeck /var/rundeck/)
+## Import nodes
 * Import resources.xml via GUI "PROJECT SETTINGS"-->"Edit Nodes..."-->"Sources"-->"Add a new Node Source"-->"File"
   * Enter file path to "resources.xml"
+    * No further settings needed
+## Secure apache config
+* Disable directory index
+  * sudo nano /etc/apache2/sites-available/000-default.conf
+```
+<Directory /var/www>
+    Options -Indexes
+    AllowOverride All
+    Order allow,deny
+    Allow from all
+</Directory>
+```
 
 # AWS
 ## Setup base image
@@ -278,9 +286,9 @@ sudo chown -R rundeck.rundeck /var/rundeck
 # TODO after clone in AWS
 ## Change username and password
 * rundeck
-  * /etc/rundeck/realm.properties (clear text or md5)
+  * sudo nano /etc/rundeck/realm.properties (clear text or md5)
 * rundeck-cli
-  * ~/.rd/rd.conf
+  * sudo nano ~/.rd/rd.conf
   * source ~/.rd/rd.conf
 * MySQL
   * ... MYSQL command to change root and rundeck
@@ -297,15 +305,12 @@ ALTER USER 'rundeck'@'%'
 IDENTIFIED WITH mysql_native_password BY '<newPW>';
 ```
 ## Change hostname/port
-* /etc/hosts
-* /etc/rundeck/framework.properties
-* /etc/rundeck/rundeck-config.properties
-* /etc/default/rundeckd
+* sudo nano /etc/hosts
+* sudo nano /etc/rundeck/framework.properties
+* sudo nano /etc/rundeck/rundeck-config.properties
+* sudo nano /etc/default/rundeckd
 * source /etc/default/rundeckd
 ## Create new certificate for new hostname
 * follow 'Activate SSL'
 ## Migrate data
 * follow 'Migrate from server A to server B'-->'Migrate projects'
-
-alter JanVanderstorm Server: 3.121.95.246
-neuer JanVanderstorm Server: 18.184.168.168
