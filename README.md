@@ -251,11 +251,18 @@ sudo chown -R rundeck.rundeck /var/rundeck
 * Copy rundeck_bkp.tar.gz to server B
 * Copy as user rundeck all files from rundeck_bkp.tar.gz to its directories stored in the backup file
     * The whole path to /var/rundeck/projects/<project-name>/etc/resources.xml must be owned by user rundeck.rundeck (sudo chown -R rundeck.rundeck /var/rundeck/)
+    * Make sure to protect private key
+```
+sudo chmod 600 /var/lib/rundeck/.ssh/id_rsa
+```
 ## Import nodes
 * Import resources.xml via GUI "PROJECT SETTINGS"-->"Edit Nodes..."-->"Sources"-->"Add a new Node Source"-->"File"
   * Enter file path to "resources.xml"
     * No further settings needed
-## Secure apache config
+## Install Apache and PHP
+```
+sudo apt install -y apache2 php
+```
 * Disable directory index
   * sudo nano /etc/apache2/sites-available/000-default.conf
 ```
