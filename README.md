@@ -321,3 +321,12 @@ IDENTIFIED WITH mysql_native_password BY '<newPW>';
 * follow 'Activate SSL'
 ## Migrate data
 * follow 'Migrate from server A to server B'-->'Migrate projects'
+
+JV  neu: 18.184.168.168
+JV  alt: 3.121.95.246
+
+WOS neu: 18.184.32.115
+WOS alt: 18.195.162.92
+
+NAT neu: 3.126.59.55
+NAT alt: 52.29.240.183
